@@ -4,7 +4,8 @@ from flask import (
     redirect,
     render_template,
     request,
-    session
+    session,
+    flash
     )
 
 
@@ -70,6 +71,7 @@ def todos_POST():
         % (session['user']['id'], request.form.get('description', ''))
     )
     g.db.commit()
+    flash('TODO created!', 'success')
     return redirect('/todo')
 
 
@@ -79,4 +81,5 @@ def todo_delete(id):
         return redirect('/login')
     g.db.execute("DELETE FROM todos WHERE id ='%s'" % id)
     g.db.commit()
+    flash('TODO deleted!', 'success')
     return redirect('/todo')
