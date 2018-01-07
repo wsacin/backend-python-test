@@ -60,6 +60,17 @@ def todos():
     return render_template('todos.html', todos=todos)
 
 
+@app.route('/todo/<id>', methods=['PUT'])
+@login_required
+def todos_update(id):
+    todo = Todo.query.get(id)
+    done = request.form['done']
+    todo.done = not todo.done if done else todo.done
+    db_session.add(todo)
+    db_session.commit()
+    return render_template('todo.html', todo=todo)
+
+
 @app.route('/todo', methods=['POST'])
 @app.route('/todo/', methods=['POST'])
 @login_required

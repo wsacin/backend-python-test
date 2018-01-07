@@ -2,6 +2,7 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
+    Boolean,
     ForeignKey
     )
 from sqlalchemy.orm import relationship
@@ -32,10 +33,12 @@ class Todo(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     description = Column(String(255), unique=True)
+    done = Column(Boolean, default=False)
 
     def __init__(self, user_id=None, description=None):
         self.user_id = user_id
         self.description = description
+        self.done = False
 
     def __repr__(self):
         return '<Todo(user: {}) {}>'.format(self.user_id, self.description)

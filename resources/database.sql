@@ -10,5 +10,6 @@ CREATE TABLE todos (
   id INTEGER PRIMARY KEY,
   user_id INT(11) NOT NULL,
   description VARCHAR(255),
+  done BOOLEAN,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
