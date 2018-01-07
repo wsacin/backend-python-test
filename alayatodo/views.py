@@ -1,4 +1,5 @@
 from alayatodo import app
+from alayatodo.helpers import login_required
 from flask import (
     g,
     redirect,
@@ -45,6 +46,7 @@ def logout():
 
 
 @app.route('/todo/<id>', methods=['GET'])
+@login_required
 def todo(id):
     cur = g.db.execute("SELECT * FROM todos WHERE id ='%s'" % id)
     todo = cur.fetchone()
@@ -53,9 +55,8 @@ def todo(id):
 
 @app.route('/todo', methods=['GET'])
 @app.route('/todo/', methods=['GET'])
+@login_required
 def todos():
-    if not session.get('logged_in'):
-        return redirect('/login')
     cur = g.db.execute("SELECT * FROM todos")
     todos = cur.fetchall()
     return render_template('todos.html', todos=todos)
@@ -63,9 +64,8 @@ def todos():
 
 @app.route('/todo', methods=['POST'])
 @app.route('/todo/', methods=['POST'])
+@login_required
 def todos_POST():
-    if not session.get('logged_in'):
-        return redirect('/login')
     g.db.execute(
         "INSERT INTO todos (user_id, description) VALUES ('%s', '%s')"
         % (session['user']['id'], request.form.get('description', ''))
@@ -76,9 +76,8 @@ def todos_POST():
 
 
 @app.route('/todo/<id>', methods=['POST'])
+@login_required
 def todo_delete(id):
-    if not session.get('logged_in'):
-        return redirect('/login')
     g.db.execute("DELETE FROM todos WHERE id ='%s'" % id)
     g.db.commit()
     flash('TODO deleted!', 'success')
