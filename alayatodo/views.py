@@ -1,7 +1,8 @@
 from alayatodo import app
+from alayatodo.models import User, Todo
+from alayatodo.database import db_session
 from alayatodo.helpers import login_required
 from flask import (
-    g,
     redirect,
     render_template,
     request,
@@ -27,14 +28,13 @@ def login_POST():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    sql = "SELECT * FROM users WHERE username = '%s' AND password = '%s'";
-    cur = g.db.execute(sql % (username, password))
-    user = cur.fetchone()
+    user = User.query.filter_by(username=username,
+                                password=password).first()
     if user:
-        session['user'] = dict(user)
+        session['user'] = {'id': user.id,
+                           'username': username}
         session['logged_in'] = True
         return redirect('/todo')
-
     return redirect('/login')
 
 
@@ -48,8 +48,7 @@ def logout():
 @app.route('/todo/<id>', methods=['GET'])
 @login_required
 def todo(id):
-    cur = g.db.execute("SELECT * FROM todos WHERE id ='%s'" % id)
-    todo = cur.fetchone()
+    todo = Todo.query.get(id)
     return render_template('todo.html', todo=todo)
 
 
@@ -57,8 +56,7 @@ def todo(id):
 @app.route('/todo/', methods=['GET'])
 @login_required
 def todos():
-    cur = g.db.execute("SELECT * FROM todos")
-    todos = cur.fetchall()
+    todos = Todo.query.all()
     return render_template('todos.html', todos=todos)
 
 
@@ -66,11 +64,10 @@ def todos():
 @app.route('/todo/', methods=['POST'])
 @login_required
 def todos_POST():
-    g.db.execute(
-        "INSERT INTO todos (user_id, description) VALUES ('%s', '%s')"
-        % (session['user']['id'], request.form.get('description', ''))
-    )
-    g.db.commit()
+    description = request.form['description']
+    todo = Todo(user_id=session['user']['id'], description=description)
+    db_session.add(todo)
+    db_session.commit()
     flash('TODO created!', 'success')
     return redirect('/todo')
 
@@ -78,7 +75,8 @@ def todos_POST():
 @app.route('/todo/<id>', methods=['POST'])
 @login_required
 def todo_delete(id):
-    g.db.execute("DELETE FROM todos WHERE id ='%s'" % id)
-    g.db.commit()
+    todo = Todo.query.get(id)
+    db_session.delete(todo)
+    db_session.commit()
     flash('TODO deleted!', 'success')
     return redirect('/todo')
