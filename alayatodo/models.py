@@ -26,6 +26,12 @@ class User(Base):
     def __repr__(self):
         return '<User %r>' % (self.username)
 
+    def get_security_payload(self):
+        return {
+          'id': self.id,
+          'username': self.username
+        }
+
     @property
     def jsonified(self):
         return jsonify(id=self.id, username=self.username)

@@ -31,8 +31,7 @@ def login_POST():
     user = User.query.filter_by(username=username,
                                 password=password).first()
     if user:
-        session['user'] = {'id': user.id,
-                           'username': username}
+        session['user'] = user.get_security_payload()
         session['logged_in'] = True
         return redirect('/todo')
     return redirect('/login')
