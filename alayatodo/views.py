@@ -1,13 +1,13 @@
 from alayatodo import app
 from alayatodo.models import User, Todo
 from alayatodo.database import db_session
-from alayatodo.helpers import login_required
+from alayatodo.helpers import login_required, render_template_or_json
 from flask import (
     redirect,
     render_template,
     request,
     session,
-    flash
+    flash,
     )
 
 
@@ -45,15 +45,15 @@ def logout():
     return redirect('/')
 
 
+@app.route('/todo/<id>/json', methods=['GET'])
 @app.route('/todo/<id>', methods=['GET'])
 @login_required
 def todo(id):
     todo = Todo.query.get(id)
-    return render_template('todo.html', todo=todo)
+    return render_template_or_json('todo.html',  request.url_rule, todo=todo)
 
 
-@app.route('/todo', methods=['GET'])
-@app.route('/todo/', methods=['GET'])
+@app.route('/todo', strict_slashes=False, methods=['GET'])
 @login_required
 def todos():
     todos = Todo.query.all()
@@ -71,15 +71,19 @@ def todos_update(id):
     return render_template('todo.html', todo=todo)
 
 
-@app.route('/todo', methods=['POST'])
-@app.route('/todo/', methods=['POST'])
+@app.route('/todo', strict_slashes=False, methods=['POST'])
 @login_required
 def todos_POST():
     description = request.form['description']
-    todo = Todo(user_id=session['user']['id'], description=description)
-    db_session.add(todo)
-    db_session.commit()
-    flash('TODO created!', 'success')
+
+    if not description:
+        flash('TODOs must have a description!', 'error')
+    else:
+        todo = Todo(user_id=session['user']['id'],
+                    description=description)
+        db_session.add(todo)
+        db_session.commit()
+        flash('TODO created!', 'success')
     return redirect('/todo')
 
 

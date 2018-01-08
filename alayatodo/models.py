@@ -5,6 +5,7 @@ from sqlalchemy import (
     Boolean,
     ForeignKey
     )
+from flask import jsonify
 from sqlalchemy.orm import relationship
 from alayatodo.database import Base
 
@@ -25,6 +26,10 @@ class User(Base):
     def __repr__(self):
         return '<User %r>' % (self.username)
 
+    @property
+    def jsonified(self):
+        return jsonify(id=self.id, username=self.username)
+
 
 class Todo(Base):
 
@@ -42,3 +47,9 @@ class Todo(Base):
 
     def __repr__(self):
         return '<Todo(user: {}) {}>'.format(self.user_id, self.description)
+
+    @property
+    def jsonified(self):
+        return jsonify(id=self.id,
+                       done=self.done,
+                       description=self.description)

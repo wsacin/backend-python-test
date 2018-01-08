@@ -1,4 +1,4 @@
-$("form[action='/todo/']").submit(function() {
+$("form[action='/todo']").submit(function() {
   if ($.trim($("input[name=description]").val()) === '') {
     $('#form-alert').prop('hidden', false);
     setTimeout(function() {
