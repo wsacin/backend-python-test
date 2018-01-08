@@ -48,21 +48,23 @@ def logout():
 @app.route('/todo/<id>', methods=['GET'])
 @login_required
 def todo(id):
-    todo = Todo.query.get(id)
-    return render_template_or_json('todo.html',  request.url_rule, todo=todo)
+    todo = Todo.query.filter_by(id=id, user_id=session['user']['id']).first()
+    return render_template_or_json('todo.html',
+                                   request.url_rule,
+                                   todo=todo)
 
 
 @app.route('/todo', strict_slashes=False, methods=['GET'])
 @login_required
 def todos():
-    todos = Todo.query.all()
+    todos = Todo.query.filter_by(user_id=session['user']['id'])
     return render_template('todos.html', todos=todos)
 
 
 @app.route('/todo/<id>', methods=['PUT'])
 @login_required
 def todos_update(id):
-    todo = Todo.query.get(id)
+    todo = Todo.query.filter_by(id=id, user_id=session['user']['id']).first()
     done = request.form['done']
     todo.done = not todo.done if done else todo.done
     db_session.add(todo)
@@ -89,7 +91,7 @@ def todos_POST():
 @app.route('/todo/<id>', methods=['POST'])
 @login_required
 def todo_delete(id):
-    todo = Todo.query.get(id)
+    todo = Todo.query.filter_by(id=id, user_id=session['user']['id']).first()
     db_session.delete(todo)
     db_session.commit()
     flash('TODO deleted!', 'success')
