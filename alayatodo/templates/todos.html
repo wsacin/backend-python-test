@@ -43,9 +43,23 @@
                 <td>
                     <button type="submit" class="btn btn-sm btn-primary">Add</button>
                 </td>
+                <td>
+                </td>
             </form>
         </tr>
     </table>
+    <p><small>{{ page_items[0] }} - {{ page_items[1] }} of {{ pagination.total }}</small></p>
+    <ul class="pagination">
+      {% for page in  pagination.pages %}
+        {% if page == current_page %}
+          <li class="active"><a href="/todo?page={{ page }}">{{ page }}</a></li>
+        {% else %}
+          <li><a href="/todo?page={{ page }}">{{ page }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    <ul class="pagination">
+    </ul>
     <div id="form-alert" hidden=true class="alert alert-danger alert-dismissible" role="alert">
       A Todo must have a description!
     </div>

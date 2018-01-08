@@ -5,6 +5,34 @@ body {
 .login-form > div {
     margin-top: 10px;
 }
-.error-template {padding: 40px 15px;text-align: center;}
-.error-actions {margin-top:15px;margin-bottom:15px;}
-.error-actions .btn { margin-right:10px; }
+
+.error-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+.error-actions {
+  margin-top:15px;
+  margin-bottom:15px;
+}
+
+.error-actions .btn {
+  margin-right:10px;
+}
+
+.pagination-page-info {
+  padding: .6em;
+  padding-left: 0;
+  width: 40em;
+  margin: .5em;
+  margin-left: 0;
+  font-size: 12px;
+}
+
+.pagination-page-info b {
+  color: black;
+  background: #6aa6ed;
+  padding-left: 2px;
+  padding: .1em .25em;
+  font-size: 150%;
+}
