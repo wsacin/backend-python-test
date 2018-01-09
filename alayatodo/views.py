@@ -1,9 +1,9 @@
 from alayatodo import app
-from alayatodo.models import User, Todo
-from alayatodo.database import db_session
+from alayatodo.models import Todo
 from alayatodo.helpers import login_required, render_template_or_json
 from flask_paginate import Pagination, get_page_parameter
 from alayatodo.forms import LoginForm
+from alayatodo import db
 from flask import (
     redirect,
     render_template,
@@ -99,8 +99,8 @@ def todos_POST():
     else:
         todo = Todo(user_id=session['user']['id'],
                     description=description)
-        db_session.add(todo)
-        db_session.commit()
+        db.session.add(todo)
+        db.session.commit()
         flash('TODO created!', 'success')
     return redirect('/todo')
 
@@ -109,7 +109,7 @@ def todos_POST():
 @login_required
 def todo_delete(id):
     todo = Todo.query.filter_by(id=id, user_id=session['user']['id']).first()
-    db_session.delete(todo)
-    db_session.commit()
+    db.session.delete(todo)
+    db.session.commit()
     flash('TODO deleted!', 'success')
     return redirect('/todo')

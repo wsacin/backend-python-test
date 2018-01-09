@@ -1,17 +1,10 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    Boolean,
-    ForeignKey
-    )
+from alayatodo import app, db
 from flask import jsonify
 from sqlalchemy.orm import relationship
-from alayatodo.database import Base
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class User(Base):
+class User(db.Model):
 
     __tablename__ = 'users'
 
@@ -47,10 +40,10 @@ class Todo(db.Model):
 
     __tablename__ = 'todos'
 
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    description = Column(String(255), unique=True)
-    done = Column(Boolean, default=False)
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    description = db.Column(db.String(255), unique=True)
+    done = db.Column(db.Boolean, default=False)
 
     def __init__(self, user_id=None, description=None):
         self.user_id = user_id
