@@ -57,5 +57,15 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='javascript/form.js') }}"></script>
     <script src="{{ url_for('static', filename='javascript/alert.js') }}"></script>
+    <script>
+      var csrftoken = $('meta[name=csrf-token]').attr('content')
+      $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken)
+          }
+        }
+      })
+    </script>
   </body>
 </html>

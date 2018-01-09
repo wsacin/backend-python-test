@@ -82,7 +82,7 @@ def todos():
 @login_required
 def todos_update_done(id):
     todo = Todo.query.filter_by(id=id, user_id=session['user']['id']).first()
-    todo.done = not todo.done if todo.done else todo.done
+    todo.done = not todo.done
     db.session.add(todo)
     db.session.commit()
     return render_template('todo.html', todo=todo)
