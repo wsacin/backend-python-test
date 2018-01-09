@@ -32,8 +32,20 @@ Credentials:
 ```sh
 virtualenv .
 bin/pip install -r requirements.txt
-bin/python main.py initdb
-bin/python main.py
+# ATTENTION: NEW MIGRATION FEATURE!!
+bin/python main.py db init
+bin/python main.py db migrate
+bin/python main.py db upgrate
+```
+**/!\ If you already have the default database, you can run the latest migrations:**
+```sh
+bin/python main.py db upgrade
+```
+
+You may load fixtures (/alayatodo/fixtures/) by running:
+
+```sh
+bin/python main.py load_fixtures
 ```
 
 ### Instructions
