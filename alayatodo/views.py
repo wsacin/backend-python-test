@@ -80,10 +80,9 @@ def todos():
 
 @app.route('/todo/<id>', methods=['PUT'])
 @login_required
-def todos_update(id):
+def todos_update_done(id):
     todo = Todo.query.filter_by(id=id, user_id=session['user']['id']).first()
-    done = request.form['done']
-    todo.done = not todo.done if done else todo.done
+    todo.done = not todo.done if todo.done else todo.done
     db.session.add(todo)
     db.session.commit()
     return render_template('todo.html', todo=todo)
