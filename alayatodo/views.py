@@ -3,6 +3,7 @@ from alayatodo.models import User, Todo
 from alayatodo.database import db_session
 from alayatodo.helpers import login_required, render_template_or_json
 from flask_paginate import Pagination, get_page_parameter
+from alayatodo.forms import LoginForm
 from flask import (
     redirect,
     render_template,
@@ -29,15 +30,13 @@ def login():
 
 @app.route('/login', methods=['POST'])
 def login_POST():
-    username = request.form.get('username')
-    password = request.form.get('password')
-
-    user = User.query.filter_by(username=username,
-                                password=password).first()
-    if user:
-        session['user'] = user.get_security_payload()
+    form = LoginForm(request.form)
+    if form.validate() and form.user:
+        session['user'] = form.user.get_security_payload()
         session['logged_in'] = True
+        flash('Login successfully', 'success')
         return redirect('/todo')
+    flash('Incorrect username or password.', 'error')
     return redirect('/login')
 
 
@@ -85,8 +84,8 @@ def todos_update(id):
     todo = Todo.query.filter_by(id=id, user_id=session['user']['id']).first()
     done = request.form['done']
     todo.done = not todo.done if done else todo.done
-    db_session.add(todo)
-    db_session.commit()
+    db.session.add(todo)
+    db.session.commit()
     return render_template('todo.html', todo=todo)
 
 

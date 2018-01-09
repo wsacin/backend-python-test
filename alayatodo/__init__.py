@@ -7,6 +7,7 @@ DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
+PASSWORD_HASH_METHOD = 'pbkdf2:sha1'
 
 
 app = Flask(__name__)

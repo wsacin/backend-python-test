@@ -8,23 +8,21 @@ from sqlalchemy import (
 from flask import jsonify
 from sqlalchemy.orm import relationship
 from alayatodo.database import Base
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(Base):
 
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
-    username = Column(String(255), unique=True)
-    password = Column(String(255), unique=True)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255), unique=True)
+    pw_hash = db.Column(db.String(255), unique=True)
     todos = relationship('Todo')
 
-    def __init__(self, username=None, password=None):
+    def __init__(self, username, password):
         self.username = username
-        self.password = password
-
-    def __repr__(self):
-        return '<User %r>' % (self.username)
+        self.set_password(password)
 
     def get_security_payload(self):
         return {
@@ -36,8 +34,16 @@ class User(Base):
     def jsonified(self):
         return jsonify(id=self.id, username=self.username)
 
+    def set_password(self, password):
+        self.pw_hash = generate_password_hash(
+            password, method=app.config['PASSWORD_HASH_METHOD']
+        )
 
-class Todo(Base):
+    def check_password(self, password):
+        return check_password_hash(self.pw_hash, password)
+
+
+class Todo(db.Model):
 
     __tablename__ = 'todos'
 
